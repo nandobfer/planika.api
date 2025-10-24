@@ -1,13 +1,13 @@
-name: forrocwb.api
+name: planika.api
 
 services:
   api:
-    image: nandoburgos/forrocwb.api
-    container_name: forrocwb.api
+    image: nandoburgos/planika.api
+    container_name: planika.api
     environment:
       - PORT=4545
-      - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/forrocwb
-      - URL=https://api-forrocwb.nandoburgos.dev
+      - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/planika
+      - URL=https://api-planika.nandoburgos.dev
       - JWT_SECRET=0IGSGJ0IWOsdljfo
     ports:
       - "4545:4545"
