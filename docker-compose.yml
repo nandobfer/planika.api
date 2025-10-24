@@ -23,4 +23,4 @@ services:
 
 volumes:
   static_volume:
-    name: "forrocwb_static_files"
+    name: "planika_static_files"
