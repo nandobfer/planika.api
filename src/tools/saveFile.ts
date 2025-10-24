@@ -12,14 +12,13 @@ const getBuffer = (file: FileUpload) => {
     return Buffer.from(file.file as ArrayBuffer)
 }
 
-export const saveFile = (path: string, file: FileUpload, callback?: () => void) => {
-    const buffer = getBuffer(file)
+export const saveFile = (path: string, buffer: Buffer<ArrayBufferLike>, file_name: string, callback?: () => void) => {
     const uploadDir = `static/${path}`
     if (!existsSync(uploadDir)) {
         mkdirSync(uploadDir, { recursive: true })
     }
 
-    const filepath = join(uploadDir, slugify(file.name))
+    const filepath = join(uploadDir, slugify(file_name))
     createWriteStream(filepath).write(buffer, () => {
         if (callback) callback()
     })

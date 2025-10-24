@@ -3,6 +3,8 @@ import { prisma } from "../prisma"
 import { WithoutFunctions } from "./helpers"
 import { uid } from "uid"
 import jwt from 'jsonwebtoken'
+import { UploadedFile } from "express-fileupload"
+import { saveFile } from "../tools/saveFile"
 
 export type UserPrisma = Prisma.UserGetPayload<{}>
 
@@ -151,5 +153,17 @@ export class User {
         })
 
         this.load(updated)
+    }
+
+    async updateImage(file: UploadedFile) {
+        const { url } = saveFile(`/user/${this.id}`, file.data, file.name)
+        await this.update({ picture: url })
+
+        return url
+    }
+
+    async delete() {
+        await prisma.user.delete({ where: { id: this.id } })
+        return this
     }
 }

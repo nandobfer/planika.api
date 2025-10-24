@@ -1,9 +1,6 @@
 import express, { Express, Request, Response } from "express"
 import { version } from "./src/version"
 import user from "./src/rest/user"
-import event from "./src/rest/event"
-import artist from "./src/rest/artist"
-import band from "./src/rest/band"
 import login from "./src/rest/login"
 
 export const router = express.Router()
@@ -13,9 +10,6 @@ router.get("/", (request, response) => {
 })
 
 router.use("/user", user)
-router.use("/event", event)
-router.use("/artist", artist)
-router.use("/band", band)
 router.use("/login", login)
 
 router.get("/ip", (req, res) => {
