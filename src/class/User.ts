@@ -105,7 +105,7 @@ export class User {
                 return await this.new({
                     id: people.sub,
                     email: people.email,
-                    name: people.name,
+                    name: people.name.split(" ").slice(0, 2).join(" "),
                     picture: people.picture,
                     password: uid(16),
                 })
