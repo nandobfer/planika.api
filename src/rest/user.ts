@@ -3,6 +3,7 @@ import { authenticate, AuthenticatedRequest } from "../middlewares/authenticate"
 import { User, UserForm } from "../class/User"
 import { UploadedFile } from "express-fileupload"
 import { Prisma } from "@prisma/client"
+import { HandledPrismaError } from "../class/HandledError"
 
 const router = express.Router()
 
@@ -62,6 +63,17 @@ router.post("/", async (request: Request, response: Response) => {
         const token = user.getToken()
         return response.send(token)
     } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2002") {
+                // Unique constraint failed
+                return response.status(400).json(
+                    new HandledPrismaError({
+                        text: "Email já cadastrado.",
+                        key: "email",
+                    })
+                )
+            }
+        }
         console.log(error)
         response.status(500).send(error)
     }
@@ -79,7 +91,12 @@ router.post("/change-password", authenticate, async (request: AuthenticatedReque
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2025") {
                 // Record to update not found.
-                return response.status(400).json({ message: "Senha atual incorreta." })
+                return response.status(400).json(
+                    new HandledPrismaError({
+                        text: "Senha atual incorreta.",
+                        key: "current_password",
+                    })
+                )
             }
             console.log(error)
             response.status(500).send(error)
