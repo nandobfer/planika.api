@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express"
 import { version } from "./src/version"
 import user from "./src/rest/user"
 import login from "./src/rest/login"
+import currency from "./src/rest/currency"
 
 export const router = express.Router()
 
@@ -11,6 +12,7 @@ router.get("/", (request, response) => {
 
 router.use("/user", user)
 router.use("/login", login)
+router.use("/currency", currency)
 
 router.get("/ip", (req, res) => {
     // Modern way (requires trust proxy)

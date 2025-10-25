@@ -12,7 +12,7 @@ const getBuffer = (file: FileUpload) => {
     return Buffer.from(file.file as ArrayBuffer)
 }
 
-export const saveFile = (path: string, buffer: Buffer<ArrayBufferLike>, file_name: string, callback?: () => void) => {
+export const saveFile = (path: string, buffer: Buffer, file_name: string, callback?: () => void) => {
     const uploadDir = `static/${path}`
     if (!existsSync(uploadDir)) {
         mkdirSync(uploadDir, { recursive: true })

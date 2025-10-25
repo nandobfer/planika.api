@@ -14,3 +14,13 @@ model User {
     password  String
     picture   String?
 }
+
+model CurrencyRate {
+    id          Int     @id @default(autoincrement())
+    symbol      String
+    name        String
+    code        String  @unique
+    updatedAt   String
+    base        String
+    rate        Float
+}
