@@ -8,11 +8,13 @@ generator client {
 }
 
 model User {
-    id        String    @id
-    name      String
-    email     String    @unique
-    password  String
-    picture   String?
+    id                  String    @id
+    name                String
+    email               String    @unique
+    password            String
+    createdAt           String
+    defaultCurrency     String  @default("BRL")
+    picture             String?
 }
 
 model CurrencyRate {

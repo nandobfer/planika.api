@@ -48,7 +48,8 @@ export class User {
     id: string
     name: string
     email: string
-    picture?: string | null
+    defaultCurrency?: string
+    picture?: string
     // password: string
 
     static async new(data: UserForm) {
@@ -59,6 +60,7 @@ export class User {
                 name: data.name.trim(),
                 password: data.password.trim(),
                 picture: data.picture,
+                createdAt: Date.now().toString(),
             },
         })
 
@@ -132,7 +134,8 @@ export class User {
         this.id = data.id
         this.name = data.name
         this.email = data.email
-        this.picture = data.picture
+        this.defaultCurrency = data.defaultCurrency
+        this.picture = data.picture || undefined
         // this.password = data.password
     }
 
@@ -140,7 +143,8 @@ export class User {
         this.id = data.id
         this.name = data.name
         this.email = data.email
-        this.picture = data.picture
+        this.defaultCurrency = data.defaultCurrency
+        this.picture = data.picture || undefined
         // this.password = data.password
     }
 
@@ -153,6 +157,7 @@ export class User {
                 name: data.name?.trim(),
                 password: data.password?.trim(),
                 picture: data.picture?.trim(),
+                defaultCurrency: data.defaultCurrency?.trim(),
             },
         })
 

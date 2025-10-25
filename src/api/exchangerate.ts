@@ -1,6 +1,7 @@
 import axios from "axios"
 import { prisma } from "../prisma"
 
+// https://app.freecurrencyapi.com/dashboard
 const API_KEY = "fca_live_Jwcwc54d0veVoxj193SRLS5RECPSCcRWQWc5Hvj4"
 
 interface CurrenciesResponse {

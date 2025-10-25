@@ -32,6 +32,7 @@ router.patch("/", authenticate, async (request: AuthenticatedRequest, response: 
             await user.updateImage(file as UploadedFile)
         } else {
             const data = request.body as Partial<UserForm>
+            console.log(data)
             await user.update(data)
         }
 
