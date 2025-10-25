@@ -54,6 +54,19 @@ router.delete("/", authenticate, async (request: AuthenticatedRequest, response:
     }
 })
 
+router.post("/", async (request: Request, response: Response) => {
+    const data = request.body as UserForm
+
+    try {
+        const user = await User.new(data)
+        const token = user.getToken()
+        return response.send(token)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 router.post("/change-password", authenticate, async (request: AuthenticatedRequest, response: Response) => {
     const data = request.body as { current_password: string; new_password: string }
 

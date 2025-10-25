@@ -55,9 +55,9 @@ export class User {
         const new_user = await prisma.user.create({
             data: {
                 id: data.id || uid(),
-                email: data.email,
-                name: data.name,
-                password: data.password,
+                email: data.email.trim(),
+                name: data.name.trim(),
+                password: data.password.trim(),
                 picture: data.picture,
             },
         })
@@ -169,5 +169,9 @@ export class User {
     async delete() {
         await prisma.user.delete({ where: { id: this.id } })
         return this
+    }
+
+    getToken() {
+        return jwt.sign({ user: this }, process.env.JWT_SECRET!)
     }
 }

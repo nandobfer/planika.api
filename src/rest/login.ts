@@ -13,7 +13,7 @@ router.post("/", async (request: Request, response: Response) => {
             return response.status(401).json({ error: "Invalid credentials" })
         }
 
-        const token = jwt.sign({ user }, process.env.JWT_SECRET!)
+        const token = user.getToken()
         return response.send(token)
     } catch (error) {
         console.log(error)
@@ -26,7 +26,7 @@ router.post("/google", async (request: Request, response: Response) => {
 
     try {
         const user = await User.googleLogin(data)
-        const token = jwt.sign({ user }, process.env.JWT_SECRET!)
+        const token = user?.getToken()
         console.log(user)
         return response.send(token)
     } catch (error) {
