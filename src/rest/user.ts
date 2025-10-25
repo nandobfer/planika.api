@@ -66,10 +66,11 @@ router.post("/change-password", authenticate, async (request: AuthenticatedReque
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2025") {
                 // Record to update not found.
-                return response.status(400).json({message: 'Senha atual incorreta.'})
+                return response.status(400).json({ message: "Senha atual incorreta." })
             }
-        console.log(error)
-        response.status(500).send(error)
+            console.log(error)
+            response.status(500).send(error)
+        }
     }
 })
 
