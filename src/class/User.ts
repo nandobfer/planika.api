@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client"
 import { prisma } from "../prisma"
 import { WithoutFunctions } from "./helpers"
 import { uid } from "uid"
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
 
@@ -124,6 +124,10 @@ export class User {
         }
     }
 
+    static async tryChangePassword(user_id: string, current_password: string, new_password: string) {
+        await prisma.user.update({ where: { id: user_id, password: current_password }, data: { password: new_password } })
+    }
+
     constructor(data: UserPrisma) {
         this.id = data.id
         this.name = data.name
@@ -145,10 +149,10 @@ export class User {
             where: { id: this.id },
             data: {
                 id: data.id || undefined,
-                email: data.email,
-                name: data.name,
-                password: data.password,
-                picture: data.picture,
+                email: data.email?.trim(),
+                name: data.name?.trim(),
+                password: data.password?.trim(),
+                picture: data.picture?.trim(),
             },
         })
 

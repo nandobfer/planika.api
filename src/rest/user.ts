@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express"
 import { authenticate, AuthenticatedRequest } from "../middlewares/authenticate"
 import { User, UserForm } from "../class/User"
 import { UploadedFile } from "express-fileupload"
+import { Prisma } from "@prisma/client"
 
 const router = express.Router()
 
@@ -33,6 +34,7 @@ router.patch("/", authenticate, async (request: AuthenticatedRequest, response: 
             await user.update(data)
         }
 
+        console.log(user)
         return response.json(user)
     } catch (error) {
         console.log(error)
@@ -52,5 +54,23 @@ router.delete("/", authenticate, async (request: AuthenticatedRequest, response:
     }
 })
 
+router.post("/change-password", authenticate, async (request: AuthenticatedRequest, response: Response) => {
+    const data = request.body as { current_password: string; new_password: string }
+
+    try {
+        const user = request.user!
+        await User.tryChangePassword(user.id, data.current_password, data.new_password)
+
+        return response.status(201).send("ok")
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                // Record to update not found.
+                return response.status(400).json({message: 'Senha atual incorreta.'})
+            }
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
 
 export default router
