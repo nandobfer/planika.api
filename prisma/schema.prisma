@@ -15,6 +15,7 @@ model User {
     createdAt           String
     defaultCurrency     String  @default("BRL")
     picture             String?
+    trips               TripParticipant[]
 }
 
 model CurrencyRate {
@@ -25,4 +26,35 @@ model CurrencyRate {
     updatedAt   String
     base        String
     rate        Float
+}
+
+model TripParticipant {
+    id          String  @id @default(cuid())
+    tripId      String
+    role        String
+    createdAt   String
+    updatedAt   String
+    status      String
+
+    trip        Trip    @relation(fields: [tripId], references: [id])
+    
+    userId      String?
+    user        User?    @relation(fields: [userId], references: [id])
+
+}
+
+model Trip {
+    id              String  @id @default(cuid())
+    name            String
+    description     String
+    createdAt       String
+    updatedAt       String
+
+    startDate       String?
+    endDate         String?
+
+
+    participants    TripParticipant[]
+    nodesJson       Json
+
 }

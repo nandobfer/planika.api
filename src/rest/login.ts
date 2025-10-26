@@ -1,5 +1,4 @@
 import express, { Express, Request, Response } from "express"
-import jwt from "jsonwebtoken"
 import { GoogleAuthResponse, LoginForm, User } from "../class/User"
 
 const router = express.Router()
@@ -14,6 +13,7 @@ router.post("/", async (request: Request, response: Response) => {
         }
 
         const token = user.getToken()
+        console.log(token)
         return response.send(token)
     } catch (error) {
         console.log(error)

@@ -4,6 +4,7 @@ import { User, UserForm } from "../class/User"
 import { UploadedFile } from "express-fileupload"
 import { Prisma } from "@prisma/client"
 import { HandledPrismaError } from "../class/HandledError"
+import { TripForm } from "../class/Trip/Trip"
 
 const router = express.Router()
 
@@ -102,6 +103,46 @@ router.post("/change-password", authenticate, async (request: AuthenticatedReque
             console.log(error)
             response.status(500).send(error)
         }
+    }
+})
+
+router.get("/trips", authenticate, async (request: AuthenticatedRequest, response: Response) => {
+    try {
+        const user = request.user!
+        const trips = await user.getParticipatingTrips()
+
+        return response.json(trips)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.post("/trips", authenticate, async (request: AuthenticatedRequest, response: Response) => {
+    const data = request.body as TripForm
+
+    try {
+        const trip = await request.user!.newTrip(data)
+        return response.status(201).json(trip)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.get("/search", async (request: Request, response: Response) => {
+    const query = request.query.query as string | undefined
+
+    if (query) {
+        try {
+            const users = await User.search(query)
+            return response.json(users)
+        } catch (error) {
+            console.log(error)
+            response.status(500).send(error)
+        }
+    } else {
+        response.status(400).send("query param is required")
     }
 })
 

@@ -23,9 +23,11 @@ export const authenticate = async (request: AuthenticatedRequest, response: Resp
     }
 
     const token = spllited[1]
+    console.log(token)
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
-        request.user = await User.findById(decoded.id)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { user: { id: string } }
+        request.user = await User.findById(decoded.user.id)
+        console.log("authenticated user:", request.user)
         request.clientIp = request.headers["x-forwarded-for"]?.toString() || request.ip
         next()
     } catch (error) {

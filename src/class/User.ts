@@ -5,10 +5,13 @@ import { uid } from "uid"
 import jwt from "jsonwebtoken"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
+import { TripParticipant } from "./Trip/TripParticipant"
+import { Trip, trip_includes, TripForm } from "./Trip/Trip"
+import Fuse from "fuse.js"
 
 export type UserPrisma = Prisma.UserGetPayload<{}>
 
-export type UserForm = Omit<WithoutFunctions<User>, "id"> & { password: string; id?: string | null }
+export type UserForm = Omit<WithoutFunctions<User>, "id" | "createdAt"> & { password: string; id?: string | null }
 
 export interface GoogleAuthResponse {
     credential: string
@@ -50,6 +53,7 @@ export class User {
     email: string
     defaultCurrency?: string
     picture?: string
+    createdAt: number
     // password: string
 
     static async new(data: UserForm) {
@@ -126,6 +130,17 @@ export class User {
         }
     }
 
+    static async search(query: string) {
+        const list = await this.getAll()
+        const fuse = new Fuse(list, {
+            keys: ["name", "email"],
+            threshold: 0.3
+
+        })
+        const results = fuse.search(query)
+        return results.map(result => result.item)
+    }
+
     static async tryChangePassword(user_id: string, current_password: string, new_password: string) {
         await prisma.user.update({ where: { id: user_id, password: current_password }, data: { password: new_password } })
     }
@@ -136,6 +151,7 @@ export class User {
         this.email = data.email
         this.defaultCurrency = data.defaultCurrency
         this.picture = data.picture || undefined
+        this.createdAt = Number(data.createdAt)
         // this.password = data.password
     }
 
@@ -178,5 +194,18 @@ export class User {
 
     getToken() {
         return jwt.sign({ user: this }, process.env.JWT_SECRET!)
+    }
+
+    async getParticipatingTrips() {
+        const result = await prisma.trip.findMany({
+            where: { participants: { some: { userId: this.id } } },
+            include: trip_includes,
+        })
+
+        return result.map((item) => new Trip(item))
+    }
+
+    async newTrip(data: TripForm) {
+        return await Trip.new(data, this.id)
     }
 }

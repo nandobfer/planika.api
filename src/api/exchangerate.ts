@@ -55,7 +55,6 @@ class ExchangeRateAPI {
     async init() {
         await this.getRates()
         console.log("ExchangeRateAPI initialized")
-        console.log(this.rates)
     }
 
     async getRates() {
