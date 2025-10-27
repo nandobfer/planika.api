@@ -43,6 +43,7 @@ export class Mailer {
                 console.log("error sending mail")
                 console.log({ destination: options.destination })
                 console.log(error)
+                throw error
             }
     }
 }

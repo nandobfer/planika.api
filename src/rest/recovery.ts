@@ -8,17 +8,17 @@ import { templates } from "../templates/templates"
 const router = express.Router()
 
 router.post("/", async (request: Request, response: Response) => {
-    const data = request.body as { login: string }
+    const data = request.body as { email: string }
 
     try {
         const user_prisma = await prisma.user.findFirst({
-            where: { OR: [{ email: data.login }] },
+            where: { OR: [{ email: data.email }] },
         })
         if (user_prisma) {
             const user = new User(user_prisma)
             const recovery = await Recovery.new(user.email)
             // const url = `${website_url}/forgot-password/verification/${recovery.code.join("")}`
-            mailer.sendMail({
+            await mailer.sendMail({
                 destination: [user.email],
                 subject: `${recovery.code.join("")} - Código de Segurança para Redefinição de Senha`,
                 html: templates.mail.passwordRecovery(recovery.code.join(""), user),
@@ -63,7 +63,7 @@ router.post("/reset-password", async (request: Request, response: Response) => {
             await user.update({ password: data.password })
             await Recovery.finish(data.target)
         }
-        response.json(user)
+        response.json(user?.getToken())
     } catch (error) {
         console.log(error)
         response.status(500).send(error)
