@@ -10,6 +10,8 @@ services:
       - URL=https://api-planika.nandoburgos.dev
       - WEBSITE_URL=https://planika.nandoburgos.dev
       - JWT_SECRET=0IGSGJ0IWOsdljfo
+      - SMTP_USER=get_from_github_secrets
+      - SMTP_PASS=get_from_github_secrets
     ports:
       - "4545:4545"
     network_mode: "host"
