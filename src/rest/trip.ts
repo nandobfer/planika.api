@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express'
 import { authenticate, AuthenticatedRequest } from '../middlewares/authenticate'
 import { requireTrip, TripRequest } from '../middlewares/requireTrip'
 import { TripForm } from '../class/Trip/Trip'
+import { TripParticipantForm } from "../class/Trip/TripParticipant"
 const router = express.Router()
 
 type AuthenticatedTripRequest = AuthenticatedRequest & TripRequest
@@ -18,6 +19,18 @@ router.patch('/',  authenticate , requireTrip, async (request: AuthenticatedTrip
         response.status(500).send(error)
     }
 
+})
+
+router.post("/participant", authenticate, requireTrip, async (request: AuthenticatedTripRequest, response: Response) => {
+    const data = request.body as TripParticipantForm
+
+    try {
+        const participant = await request.trip!.inviteParticipant(data)
+        return response.json(participant)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
 })
 
 export default router

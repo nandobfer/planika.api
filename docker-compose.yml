@@ -6,7 +6,7 @@ services:
     container_name: planika.api
     environment:
       - PORT=4545
-      - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/planika
+      - DATABASE_URL=mysql://boz:Ewhblt69%21%40%23@boz.app.br:3306/planika?connection_limit=20&socketTimeout=30
       - URL=https://api-planika.nandoburgos.dev
       - JWT_SECRET=0IGSGJ0IWOsdljfo
     ports:

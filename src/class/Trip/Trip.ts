@@ -1,11 +1,13 @@
 import { Prisma } from "@prisma/client"
-import { TripParticipant } from "./TripParticipant"
+import { participant_include, ParticipantRole, TripParticipant, TripParticipantForm } from "./TripParticipant"
 import { Node } from "./Node"
 import { WithoutFunctions } from "../helpers"
 import { prisma } from "../../prisma"
 import { uid } from "uid"
+import { mailer } from "../Mailer"
+import { templates } from "../../templates/templates"
 
-export const trip_includes = Prisma.validator<Prisma.TripInclude>()({ participants: true })
+export const trip_includes = Prisma.validator<Prisma.TripInclude>()({ participants: { include: participant_include } })
 type PrismaTrip = Prisma.TripGetPayload<{ include: typeof trip_includes }>
 
 export type TripStatus = "planning" | "ongoing" | "completed"
@@ -47,7 +49,6 @@ export class Trip {
                         userId,
                         role: "administrator",
                         status: "active",
-                        
                     },
                 },
             },
@@ -130,5 +131,24 @@ export class Trip {
         })
 
         this.load(updated)
+    }
+
+    async inviteParticipant(data: TripParticipantForm) {
+        const participant = await TripParticipant.new(data)
+        this.participants.push(participant)
+
+        const email = data.idType === "email" ? data.identifier : (await prisma.user.findUnique({ where: { id: data.identifier } }))?.email
+
+        if (email) {
+            mailer.sendMail({
+                destination: [email],
+                subject: `Você foi convidado para a viagem "${this.name}"`,
+                html: templates.mail.inviteParticipant(this, data),
+            })
+
+            console.log("email sent")
+        }
+
+        return participant
     }
 }

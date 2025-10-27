@@ -35,6 +35,7 @@ model TripParticipant {
     createdAt   String
     updatedAt   String
     status      String
+    email       String?
 
     trip        Trip    @relation(fields: [tripId], references: [id])
     

@@ -6,7 +6,7 @@ export interface TripRequest extends Request {
 }
 
 export const requireTrip = async (request: TripRequest, response: Response, next: NextFunction) => {
-    const {  trip_id } = request.query
+    const { trip_id } = request.query
 
     if (!trip_id) {
         return response.status(400).send("trip_id param is required")

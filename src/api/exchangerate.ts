@@ -45,6 +45,7 @@ class ExchangeRateAPI {
     rates: CurrencyRate[] = []
 
     static isExpired(timestamp: string | number) {
+        return false // Mônika não quer conversão
         return Date.now() - Number(timestamp) >= 24 * 60 * 60 * 1000
     }
 

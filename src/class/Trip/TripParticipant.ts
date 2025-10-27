@@ -1,35 +1,60 @@
 import { Prisma } from "@prisma/client"
+import { prisma } from "../../prisma"
+import { User } from "../User"
 
-type ParticipantPrisma = Prisma.TripParticipantGetPayload<{}>
+export const participant_include = Prisma.validator<Prisma.TripParticipantInclude>()({ user: true })
+type ParticipantPrisma = Prisma.TripParticipantGetPayload<{ include: typeof participant_include }>
 
-export type ParticipantRole = 'administrator' | 'collaborator' | 'viewer'
+export type ParticipantRole = "administrator" | "collaborator" | "viewer"
 
 export interface TripParticipantForm {
     role: ParticipantRole
     identifier: string
-    idType: 'userId' | 'email'
+    idType: "userId" | "email"
+    tripId: string
 }
 
-export type ParticipantStatus = 'active' | 'pending'
+export type ParticipantStatus = "active" | "pending"
 
 export class TripParticipant {
     id: string
     tripId: string
+    email?: string
     role: ParticipantRole
     createdAt: number
     updatedAt: number
     status: ParticipantStatus
 
+    user?: User
     userId?: string
+
+    static async new(data: TripParticipantForm) {
+        const now = Date.now()
+        const participant = await prisma.tripParticipant.create({
+            data: {
+                tripId: data.tripId,
+                role: data.role,
+                status: "pending",
+                createdAt: now.toString(),
+                updatedAt: now.toString(),
+                email: data.idType === "email" ? data.identifier : undefined,
+                userId: data.idType === "userId" ? data.identifier : undefined,
+            },
+            include: participant_include,
+        })
+
+        return new TripParticipant(participant)
+    }
 
     constructor(data: ParticipantPrisma) {
         this.id = data.id
         this.tripId = data.tripId
+        this.email = data.email || undefined
         this.userId = data.userId || undefined
+        this.user = data.user ? new User(data.user) : undefined
         this.role = data.role as ParticipantRole
         this.createdAt = Number(data.createdAt)
         this.updatedAt = Number(data.updatedAt)
         this.status = data.status as ParticipantStatus
     }
-
 }

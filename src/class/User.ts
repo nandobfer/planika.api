@@ -132,10 +132,10 @@ export class User {
 
     static async search(query: string) {
         const list = await this.getAll()
+        const keys: (keyof User)[] = ["name", "email"]
         const fuse = new Fuse(list, {
-            keys: ["name", "email"],
-            threshold: 0.3
-
+            keys,
+            threshold: 0.5,
         })
         const results = fuse.search(query)
         return results.map(result => result.item)
