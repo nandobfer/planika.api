@@ -1,5 +1,6 @@
 import { Trip } from "../../class/Trip/Trip"
 import { TripParticipantForm } from "../../class/Trip/TripParticipant"
+import { website_url } from "../../website_url"
 
 export const inviteParticipant = (trip: Trip, data: TripParticipantForm) => `
 <!DOCTYPE html>
@@ -19,7 +20,7 @@ export const inviteParticipant = (trip: Trip, data: TripParticipantForm) => `
             : "Como visualizador, você pode apenas ver os detalhes da viagem."
     }</p>
     <p>Para aceitar o convite, clique no link abaixo:</p>
-    <a href="http://localhost:5174/accept-invite?email=${data.identifier}&trip=${trip.id}">Aceitar Convite</a>
+    <a href="${website_url}/accept-invite?email=${data.identifier}&trip=${trip.id}">Aceitar Convite</a>
     <p>Se você não esperava por este convite, pode ignorar este email.</p>
 </body>
 </html>

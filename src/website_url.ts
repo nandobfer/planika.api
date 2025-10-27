@@ -1,0 +1,1 @@
+export const website_url = process.env.WEBSITE_URL || "http://localhost:5173"

@@ -59,3 +59,10 @@ model Trip {
     nodesJson       Json
 
 }
+
+model Recovery {
+  id                Int             @id @default(autoincrement())
+  target            String
+  code              String
+  datetime          String
+}

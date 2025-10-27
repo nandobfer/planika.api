@@ -4,6 +4,7 @@ import user from "./src/rest/user"
 import login from "./src/rest/login"
 import currency from "./src/rest/currency"
 import trip from "./src/rest/trip"
+import recovery from "./src/rest/recovery"
 
 export const router = express.Router()
 
@@ -15,6 +16,7 @@ router.use("/user", user)
 router.use("/login", login)
 router.use("/currency", currency)
 router.use("/trip", trip)
+router.use("/recovery", recovery)
 
 router.get("/ip", (req, res) => {
     // Modern way (requires trust proxy)
