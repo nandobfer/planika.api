@@ -134,21 +134,31 @@ export class Trip {
     }
 
     async inviteParticipant(data: TripParticipantForm) {
-        const participant = await TripParticipant.new(data)
-        this.participants.push(participant)
-
         const email = data.idType === "email" ? data.identifier : (await prisma.user.findUnique({ where: { id: data.identifier } }))?.email
+
+        const participant = await TripParticipant.new(data, email)
+        this.participants.push(participant)
 
         if (email) {
             mailer.sendMail({
                 destination: [email],
                 subject: `Você foi convidado para a viagem "${this.name}"`,
-                html: templates.mail.inviteParticipant(this, data),
+                html: templates.mail.inviteParticipant(this, participant),
             })
 
             console.log("email sent")
         }
 
+        return participant
+    }
+
+    async acceptInvitation(email: string) {
+        const participant = this.participants.find((p) => p.email === email && p.status === "pending")
+        if (!participant) {
+            throw new Error("Convite não encontrado")
+        }
+
+        await participant.update({ status: "active" })
         return participant
     }
 }

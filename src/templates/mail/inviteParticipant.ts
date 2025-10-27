@@ -1,8 +1,8 @@
 import { Trip } from "../../class/Trip/Trip"
-import { TripParticipantForm } from "../../class/Trip/TripParticipant"
+import { TripParticipant } from "../../class/Trip/TripParticipant"
 import { website_url } from "../../website_url"
 
-export const inviteParticipant = (trip: Trip, data: TripParticipantForm) => `
+export const inviteParticipant = (trip: Trip, data: TripParticipant) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +17,10 @@ export const inviteParticipant = (trip: Trip, data: TripParticipantForm) => `
             ? "Como administrador, você terá controle total sobre a viagem."
             : data.role === "collaborator"
             ? "Como colaborador, você pode adicionar e gerenciar despesas."
-            : "Como visualizador, você pode apenas ver os detalhes da viagem."
+            : "Como visualizador, você poderá ver os detalhes da viagem, mas não poderá editá-los."
     }</p>
     <p>Para aceitar o convite, clique no link abaixo:</p>
-    <a href="${website_url}/accept-invite?email=${data.identifier}&trip=${trip.id}">Aceitar Convite</a>
+    <a href="${website_url}/accept-invite?email=${data.email}&trip=${trip.id}">Aceitar Convite</a>
     <p>Se você não esperava por este convite, pode ignorar este email.</p>
 </body>
 </html>
