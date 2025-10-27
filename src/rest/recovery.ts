@@ -36,17 +36,19 @@ router.post("/", async (request: Request, response: Response) => {
 router.post("/verify-code", async (request: Request, response: Response) => {
     const data = request.body as { code: number[]; target: string }
 
+    const decline = () => response.status(401).send("código inválido")
+
     try {
         const recovery = await Recovery.verifyCode(data.target, data.code)
         if (recovery) {
             const expired = new Date().getTime() - Number(recovery.datetime) >= 1000 * 60 * 15
             if (expired) {
-                response.json(null)
+                decline()
             } else {
                 response.json(recovery)
             }
         } else {
-            response.json(null)
+            decline()
         }
     } catch (error) {
         console.log(error)
