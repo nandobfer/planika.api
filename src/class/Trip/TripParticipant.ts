@@ -46,6 +46,19 @@ export class TripParticipant {
         return new TripParticipant(participant)
     }
 
+    static async findById(id: string) {
+        const participant = await prisma.tripParticipant.findUnique({
+            where: { id },
+            include: participant_include,
+        })
+
+        if (!participant) {
+            return null
+        }
+
+        return new TripParticipant(participant)
+    }
+
     constructor(data: ParticipantPrisma) {
         this.id = data.id
         this.tripId = data.tripId
