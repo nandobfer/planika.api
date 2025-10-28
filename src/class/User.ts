@@ -198,7 +198,7 @@ export class User {
 
     async getParticipatingTrips() {
         const result = await prisma.trip.findMany({
-            where: { participants: { some: { userId: this.id, status: "active"pedn } } },
+            where: { participants: { some: { userId: this.id, status: "active" } } },
             include: trip_includes,
         })
 
