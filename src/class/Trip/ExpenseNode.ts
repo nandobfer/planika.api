@@ -5,10 +5,10 @@ interface Expense {
     currency: string
 }
 
-export class Node {
+export class ExpenseNode {
     id: string
     tripId: string
-    
+
     description: string
     active: boolean
     locked: boolean
@@ -22,12 +22,12 @@ export class Node {
     notes: string[]
 
     parentId?: string
-    children?: Node[]
+    children: ExpenseNode[]
 
     totalExpenses: number
     totalLocations: string[]
 
-    constructor(data: WithoutFunctions<Node>) {
+    constructor(data: WithoutFunctions<ExpenseNode>) {
         this.id = data.id
         this.tripId = data.tripId
         this.description = data.description
@@ -47,11 +47,11 @@ export class Node {
 
     getTotalExpenses(): number {
         let total = this.expense ? this.expense.amount : 0
-        if (this.children) {
-            for (const child of this.children) {
-                total += child.getTotalExpenses()
-            }
+
+        for (const child of this.children) {
+            total += child.getTotalExpenses()
         }
+
         this.totalExpenses = total
         return total
     }
@@ -61,11 +61,11 @@ export class Node {
         if (this.location) {
             locations.add(this.location)
         }
-        if (this.children) {
-            for (const child of this.children) {
-                child.getTotalLocations().forEach(location => locations.add(location))
-            }
+
+        for (const child of this.children) {
+            child.getTotalLocations().forEach((location) => locations.add(location))
         }
+
         this.totalLocations = Array.from(locations)
         return this.totalLocations
     }

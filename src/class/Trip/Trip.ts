@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { participant_include, ParticipantRole, TripParticipant, TripParticipantForm } from "./TripParticipant"
-import { Node } from "./Node"
+import { ExpenseNode } from "./ExpenseNode"
 import { WithoutFunctions } from "../helpers"
 import { prisma } from "../../prisma"
 import { uid } from "uid"
@@ -26,7 +26,7 @@ export class Trip {
     endDate?: number
 
     participants: TripParticipant[]
-    nodes: Node[]
+    nodes: ExpenseNode[]
     totalExpenses: number
     status: TripStatus
 
@@ -82,7 +82,9 @@ export class Trip {
         this.endDate = data.endDate ? Number(data.endDate) : undefined
 
         this.participants = data.participants.map((participant) => new TripParticipant(participant))
-        this.nodes = (data.nodesJson ? JSON.parse(data.nodesJson as string) : []).map((node_data: WithoutFunctions<Node>) => new Node(node_data))
+        this.nodes = (data.nodesJson ? JSON.parse(data.nodesJson as string) : []).map(
+            (node_data: WithoutFunctions<ExpenseNode>) => new ExpenseNode(node_data)
+        )
 
         this.totalExpenses = this.nodes.reduce((total, node) => total + node.getTotalExpenses(), 0)
         this.status = this.getStatus()
@@ -97,7 +99,9 @@ export class Trip {
         this.endDate = data.endDate ? Number(data.endDate) : undefined
 
         this.participants = data.participants.map((participant) => new TripParticipant(participant))
-        this.nodes = (data.nodesJson ? JSON.parse(data.nodesJson as string) : []).map((node_data: WithoutFunctions<Node>) => new Node(node_data))
+        this.nodes = (data.nodesJson ? JSON.parse(data.nodesJson as string) : []).map(
+            (node_data: WithoutFunctions<ExpenseNode>) => new ExpenseNode(node_data)
+        )
 
         this.totalExpenses = this.nodes.reduce((total, node) => total + node.getTotalExpenses(), 0)
         this.status = this.getStatus()
