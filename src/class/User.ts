@@ -5,7 +5,7 @@ import { uid } from "uid"
 import jwt from "jsonwebtoken"
 import { UploadedFile } from "express-fileupload"
 import { saveFile } from "../tools/saveFile"
-import { TripParticipant } from "./Trip/TripParticipant"
+import { participant_include, TripParticipant } from "./Trip/TripParticipant"
 import { Trip, trip_includes, TripForm } from "./Trip/Trip"
 import Fuse from "fuse.js"
 
@@ -138,7 +138,7 @@ export class User {
             threshold: 0.5,
         })
         const results = fuse.search(query)
-        return results.map(result => result.item)
+        return results.map((result) => result.item)
     }
 
     static async tryChangePassword(user_id: string, current_password: string, new_password: string) {
@@ -198,7 +198,7 @@ export class User {
 
     async getParticipatingTrips() {
         const result = await prisma.trip.findMany({
-            where: { participants: { some: { userId: this.id } } },
+            where: { participants: { some: { userId: this.id, status: "active"pedn } } },
             include: trip_includes,
         })
 
@@ -207,5 +207,14 @@ export class User {
 
     async newTrip(data: TripForm) {
         return await Trip.new(data, this.id)
+    }
+
+    async getPendingInvitation() {
+        const result = await prisma.tripParticipant.findMany({
+            where: { email: this.email, status: "pending" },
+            include: participant_include,
+        })
+
+        return result.map((item) => new TripParticipant(item))
     }
 }

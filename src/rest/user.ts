@@ -146,4 +146,15 @@ router.get("/search", async (request: Request, response: Response) => {
     }
 })
 
+router.get("/pending-invitations", authenticate, async (request: AuthenticatedRequest, response: Response) => {
+    try {
+        const user = request.user!
+        const invitations = await user.getPendingInvitation()
+        return response.json(invitations)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router
