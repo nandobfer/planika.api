@@ -132,10 +132,10 @@ export class User {
 
     static async search(query: string) {
         const list = await this.getAll()
-        const keys: (keyof User)[] = ["name", "email"]
+        const keys: (keyof User)[] = ["email"]
         const fuse = new Fuse(list, {
             keys,
-            threshold: 0.5,
+            threshold: 0.2,
         })
         const results = fuse.search(query)
         return results.map((result) => result.item)
@@ -198,7 +198,7 @@ export class User {
 
     async getParticipatingTrips() {
         const result = await prisma.trip.findMany({
-            where: { participants: { some: { userId: this.id, status: "active" } } },
+            where: { participants: { some: { OR: [{ userId: this.id }, { email: this.email }], status: "active" } } },
             include: trip_includes,
         })
 
@@ -211,7 +211,7 @@ export class User {
 
     async getPendingInvitation() {
         const result = await prisma.tripParticipant.findMany({
-            where: { email: this.email, status: "pending" },
+            where: { OR: [{ email: this.email }, { userId: this.id }], status: "pending" },
             include: participant_include,
         })
 
