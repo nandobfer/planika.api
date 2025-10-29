@@ -6,6 +6,7 @@ import { prisma } from "../../prisma"
 import { uid } from "uid"
 import { mailer } from "../Mailer"
 import { templates } from "../../templates/templates"
+import { Socket } from "socket.io"
 
 export const trip_includes = Prisma.validator<Prisma.TripInclude>()({ participants: { include: participant_include } })
 type PrismaTrip = Prisma.TripGetPayload<{ include: typeof trip_includes }>
@@ -69,6 +70,43 @@ export class Trip {
         }
 
         return new Trip(result)
+    }
+
+    static async handleNodeUpdate(socket: Socket, data: ExpenseNode) {
+        const trip = await this.findById(data.tripId)
+        console.log(JSON.stringify(trip, null, 4))
+        if (trip) {
+            let node = trip.findNode(data.id)
+            if (node) {
+                node.update(data)
+                console.log(`Updating node`, node)
+            } else {
+                const parentNode = data.parentId ? trip.findNode(data.parentId) : undefined
+                node = new ExpenseNode(data)
+                if (parentNode) {
+                    parentNode.children.push(node)
+                } else {
+                    trip.nodes.push(node)
+                }
+                console.log(`Adding new node`, node)
+            }
+
+            socket.to(data.tripId).emit("trip:node", data)
+
+            await trip.saveNodes()
+        }
+    }
+
+    static async handleNodeDelete(socket: Socket, tripId: string, nodeId: string) {
+        const trip = await this.findById(tripId)
+        if (trip) {
+            trip.deleteNode(nodeId)
+            console.log(`Deleting node ${nodeId} from trip ${tripId}`)
+
+            socket.to(tripId).emit("trip:node:delete", nodeId)
+
+            await trip.saveNodes()
+        }
     }
 
     constructor(data: PrismaTrip) {
@@ -164,5 +202,37 @@ export class Trip {
 
         await participant.update({ status: "active" })
         return participant
+    }
+
+    findNode(id: string) {
+        for (const node of this.nodes) {
+            const found = node.findChild(id)
+            if (found) {
+                return found
+            }
+        }
+    }
+
+    async saveNodes() {
+        await prisma.trip.update({
+            where: { id: this.id },
+            data: {
+                nodesJson: JSON.stringify(this.nodes),
+                updatedAt: Date.now().toString(),
+            },
+        })
+    }
+
+    deleteNode(nodeId: string) {
+        const deleteRecursive = (nodes: ExpenseNode[]): ExpenseNode[] => {
+            return nodes
+                .filter((node) => node.id !== nodeId)
+                .map((node) => {
+                    node.children = deleteRecursive(node.children)
+                    return node
+                })
+        }
+
+        this.nodes = deleteRecursive(this.nodes)
     }
 }

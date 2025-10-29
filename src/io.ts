@@ -2,6 +2,8 @@ import { Socket } from "socket.io"
 import { Server as SocketIoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import { Server as HttpsServer } from "https"
+import { ExpenseNode } from "./class/Trip/ExpenseNode"
+import { Trip } from "./class/Trip/Trip"
 
 let io: SocketIoServer | null = null
 
@@ -25,4 +27,16 @@ export const handleSocket = (socket: Socket) => {
     socket.on("disconnect", () => {
         console.log(`Client disconnected: ${socket.id}`)
     })
+
+    socket.on("join", (roomId: string) => {
+        socket.join(roomId)
+        console.log(`Client ${socket.id} joined room ${roomId}`)
+    })
+
+    socket.on("leave", (roomId: string) => {
+        socket.leave(roomId)
+        console.log(`Client ${socket.id} left room ${roomId}`)
+    })
+
+    socket.on("trip:node", (node: ExpenseNode) => Trip.handleNodeUpdate(socket, node))
 }

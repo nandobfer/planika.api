@@ -34,7 +34,7 @@ export class ExpenseNode {
         this.createdAt = data.createdAt
         this.updatedAt = data.updatedAt
         this.parentId = data.parentId
-        this.children = data.children
+        this.children = data.children.map(item => new ExpenseNode(item))
         this.active = data.active
         this.expense = data.expense
         this.location = data.location
@@ -68,5 +68,25 @@ export class ExpenseNode {
 
         this.totalLocations = Array.from(locations)
         return this.totalLocations
+    }
+
+    findChild(id: string): ExpenseNode | null {
+        if (this.id === id) {
+            return this
+        }
+
+        for (const child of this.children) {
+            return child.findChild(id)
+        }
+
+        return null
+    }
+
+    update(data: Partial<WithoutFunctions<ExpenseNode>>) {
+        this.updatedAt = Date.now()
+        for (const key in data) {
+            // @ts-expect-error
+            this[key] = data[key]
+        }
     }
 }
