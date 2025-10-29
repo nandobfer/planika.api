@@ -102,7 +102,7 @@ export class Trip {
             }
 
             // Broadcast to other clients in the room
-            socket.to(data.tripId).emit("trip:node", data)
+            socket.to(data.tripId).emit("trip:update", trip)
 
             await trip.saveNodes()
         }
@@ -211,7 +211,9 @@ export class Trip {
             throw new Error("Convite não encontrado")
         }
 
-        await participant.update({ status: "active" })
+        const user = await prisma.user.findUnique({ where: { email } })
+
+        await participant.update({ status: "active", userId: user?.id })
         return participant
     }
 

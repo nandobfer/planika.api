@@ -3,6 +3,7 @@ import { WithoutFunctions } from "../helpers"
 interface Expense {
     amount: number
     currency: string
+    quantity?: number
 }
 
 export class ExpenseNode {
@@ -34,7 +35,7 @@ export class ExpenseNode {
         this.createdAt = data.createdAt
         this.updatedAt = data.updatedAt
         this.parentId = data.parentId
-        this.children = data.children.map(item => new ExpenseNode(item))
+        this.children = data.children.map((item) => new ExpenseNode(item))
         this.active = data.active
         this.expense = data.expense
         this.location = data.location
@@ -46,7 +47,9 @@ export class ExpenseNode {
     }
 
     getTotalExpenses(): number {
-        let total = this.expense ? this.expense.amount : 0
+        if (!this.active) return 0
+
+        let total = this.expense ? this.expense.amount * (this.expense.quantity || 1) : 0
 
         for (const child of this.children) {
             total += child.getTotalExpenses()
