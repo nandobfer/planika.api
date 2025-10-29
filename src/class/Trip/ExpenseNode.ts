@@ -76,7 +76,8 @@ export class ExpenseNode {
         }
 
         for (const child of this.children) {
-            return child.findChild(id)
+            const found = child.findChild(id)
+            if (found) return found
         }
 
         return null
@@ -84,9 +85,19 @@ export class ExpenseNode {
 
     update(data: Partial<WithoutFunctions<ExpenseNode>>) {
         this.updatedAt = Date.now()
-        for (const key in data) {
-            // @ts-expect-error
-            this[key] = data[key]
-        }
+
+        // Update only specific fields, avoid replacing children array
+        if (data.description !== undefined) this.description = data.description
+        if (data.active !== undefined) this.active = data.active
+        if (data.locked !== undefined) this.locked = data.locked
+        if (data.expense !== undefined) this.expense = data.expense
+        if (data.location !== undefined) this.location = data.location
+        if (data.datetime !== undefined) this.datetime = data.datetime
+        if (data.notes !== undefined) this.notes = data.notes
+        if (data.parentId !== undefined) this.parentId = data.parentId
+
+        // Recalculate totals after update
+        this.totalExpenses = this.getTotalExpenses()
+        this.totalLocations = this.getTotalLocations()
     }
 }

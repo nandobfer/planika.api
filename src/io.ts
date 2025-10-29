@@ -39,4 +39,5 @@ export const handleSocket = (socket: Socket) => {
     })
 
     socket.on("trip:node", (node: ExpenseNode) => Trip.handleNodeUpdate(socket, node))
+    socket.on("trip:node:delete", (tripId: string, nodeId: string) => Trip.handleNodeDelete(socket, tripId, nodeId))
 }

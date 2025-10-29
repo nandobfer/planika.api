@@ -78,19 +78,30 @@ export class Trip {
         if (trip) {
             let node = trip.findNode(data.id)
             if (node) {
+                // Node exists - update it
                 node.update(data)
                 console.log(`Updating node`, node)
             } else {
-                const parentNode = data.parentId ? trip.findNode(data.parentId) : undefined
+                // New node - create it
+                // Don't include children from data to avoid duplication
+                data.children = []
                 node = new ExpenseNode(data)
-                if (parentNode) {
-                    parentNode.children.push(node)
+
+                if (data.parentId) {
+                    const parentNode = trip.findNode(data.parentId)
+                    if (parentNode) {
+                        parentNode.children.push(node)
+                    } else {
+                        console.error(`Parent node ${data.parentId} not found for new node ${data.id}`)
+                        return
+                    }
                 } else {
                     trip.nodes.push(node)
                 }
                 console.log(`Adding new node`, node)
             }
 
+            // Broadcast to other clients in the room
             socket.to(data.tripId).emit("trip:node", data)
 
             await trip.saveNodes()
