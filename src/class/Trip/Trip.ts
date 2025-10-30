@@ -248,4 +248,9 @@ export class Trip {
 
         this.nodes = deleteRecursive(this.nodes)
     }
+
+    async delete() {
+        await prisma.tripParticipant.deleteMany({ where: { tripId: this.id } })
+        await prisma.trip.delete({ where: { id: this.id } })
+    }
 }

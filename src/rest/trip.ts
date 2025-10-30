@@ -31,6 +31,16 @@ router.patch("/", authenticate, requireTrip, async (request: AuthenticatedTripRe
     }
 })
 
+router.delete("/", authenticate, requireTrip, async (request: AuthenticatedTripRequest, response: Response) => {
+    try {
+        await request.trip?.delete()
+        return response.status(204).send()
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 router.patch("/participant", authenticate, requireParticipant, async (request: ParticipantRequest, response: Response) => {
     const data = request.body as Partial<TripParticipantForm>
 
