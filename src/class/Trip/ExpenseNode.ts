@@ -3,7 +3,7 @@ import { WithoutFunctions } from "../helpers"
 interface Expense {
     amount: string
     currency: string
-    quantity?: number
+    quantity?: string
 }
 
 export class ExpenseNode {
@@ -49,7 +49,11 @@ export class ExpenseNode {
     getTotalExpenses(): number {
         if (!this.active) return 0
 
-        let total = this.expense ? Number(this.expense.amount) * (this.expense.quantity || 1) : 0
+        let total = 0
+
+        if (this.expense) {
+            total += Number(this.expense.amount) * (Number(this.expense.quantity?.toString().replace(/[^0-9.-]+/g, "")) || 1)
+        }
 
         for (const child of this.children) {
             total += child.getTotalExpenses()
