@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express, Request, Response, Router } from "express"
 import { version } from "./src/version"
 import user from "./src/rest/user"
 import login from "./src/rest/login"
@@ -6,7 +6,7 @@ import currency from "./src/rest/currency"
 import trip from "./src/rest/trip"
 import recovery from "./src/rest/recovery"
 
-export const router = express.Router()
+export const router: Router = express.Router()
 
 router.get("/", (request, response) => {
     response.json({ version })
