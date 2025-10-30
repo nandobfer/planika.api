@@ -1,7 +1,7 @@
 import { WithoutFunctions } from "../helpers"
 
 interface Expense {
-    amount: number
+    amount: string
     currency: string
     quantity?: number
 }
@@ -49,7 +49,7 @@ export class ExpenseNode {
     getTotalExpenses(): number {
         if (!this.active) return 0
 
-        let total = this.expense ? this.expense.amount * (this.expense.quantity || 1) : 0
+        let total = this.expense ? Number(this.expense.amount) * (this.expense.quantity || 1) : 0
 
         for (const child of this.children) {
             total += child.getTotalExpenses()
