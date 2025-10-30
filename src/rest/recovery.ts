@@ -1,11 +1,11 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express, Request, Response, Router } from "express"
 import { prisma } from "../prisma"
 import { User } from "../class/User"
 import { Recovery } from "../class/Recovery"
 import { mailer } from "../class/Mailer"
 import { templates } from "../templates/templates"
 
-const router = express.Router()
+const router: Router = express.Router()
 
 router.post("/", async (request: Request, response: Response) => {
     const data = request.body as { email: string }

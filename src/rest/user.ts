@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express, Request, Response, Router } from "express"
 import { authenticate, AuthenticatedRequest } from "../middlewares/authenticate"
 import { User, UserForm } from "../class/User"
 import { UploadedFile } from "express-fileupload"
@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client"
 import { HandledPrismaError } from "../class/HandledError"
 import { TripForm } from "../class/Trip/Trip"
 
-const router = express.Router()
+const router: Router = express.Router()
 
 router.get("/", async (request: Request, response: Response) => {
     const { user_id } = request.query

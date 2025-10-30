@@ -1,10 +1,11 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express, Request, Response, Router } from "express"
 import { authenticate, AuthenticatedRequest } from "../middlewares/authenticate"
 import { requireTrip, TripRequest } from "../middlewares/requireTrip"
 import { TripForm } from "../class/Trip/Trip"
 import { TripParticipantForm } from "../class/Trip/TripParticipant"
 import { ParticipantRequest, requireParticipant } from "../middlewares/requireParticipant"
-const router = express.Router()
+
+const router: Router = express.Router()
 
 type AuthenticatedTripRequest = AuthenticatedRequest & TripRequest
 

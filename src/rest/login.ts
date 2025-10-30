@@ -1,7 +1,7 @@
-import express, { Express, Request, Response } from "express"
+import express, { Express, Request, Response, Router } from "express"
 import { GoogleAuthResponse, LoginForm, User } from "../class/User"
 
-const router = express.Router()
+const router: Router = express.Router()
 
 router.post("/", async (request: Request, response: Response) => {
     const data = request.body as LoginForm
