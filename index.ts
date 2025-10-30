@@ -8,7 +8,7 @@ import http from "http"
 import fileUpload from "express-fileupload"
 import express_prom_bundle from "express-prom-bundle"
 import { getIoInstance, handleSocket, initializeIoServer } from "./src/io"
-import expressWebsockets from "express-ws"
+import expressWebsockets, { Application } from "express-ws"
 import { hocuspocus } from "./src/hocuspocus"
 
 process.on("unhandledRejection", (reason, promise) => {
@@ -30,7 +30,9 @@ const metricsMiddleware = express_prom_bundle({
 
 dotenv.config()
 
-const { app } = expressWebsockets(express())
+const app = express()
+const server = http.createServer(app)
+expressWebsockets(app, server)
 const port = process.env.PORT
 
 // @ts-ignore
@@ -57,15 +59,14 @@ app.use(
     })
 )
 
-app.ws("/hocuspocus", (socket, request) => {
+// @ts-ignore - express-ws adds .ws method to app
+app.ws("/hocuspocus", (ws: any, request: any) => {
     console.log("New WebSocket connection to /hocuspocus")
 
     const context = {}
-    // any context?
-    hocuspocus.handleConnection(socket, request, context)
+    // any context you need, e.g., { user: request.user }
+    hocuspocus.handleConnection(ws, request, context)
 })
-
-const server = http.createServer(app)
 
 initializeIoServer(server)
 const io = getIoInstance()
