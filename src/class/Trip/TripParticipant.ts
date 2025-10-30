@@ -99,4 +99,8 @@ export class TripParticipant {
 
         this.load(updated)
     }
+
+    async delete() {
+        await prisma.tripParticipant.delete({ where: { id: this.id } })
+    }
 }

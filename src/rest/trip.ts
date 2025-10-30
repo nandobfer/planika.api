@@ -54,6 +54,16 @@ router.patch("/participant", authenticate, requireParticipant, async (request: P
     }
 })
 
+router.delete("/participant", authenticate, requireParticipant, async (request: ParticipantRequest, response: Response) => {
+    try {
+        await request.participant?.delete()
+        return response.status(204).send()
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 router.post("/participant", authenticate, requireTrip, async (request: AuthenticatedTripRequest, response: Response) => {
     const data = request.body as TripParticipantForm
 
