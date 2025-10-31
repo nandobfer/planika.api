@@ -253,4 +253,41 @@ export class Trip {
         await prisma.tripParticipant.deleteMany({ where: { tripId: this.id } })
         await prisma.trip.delete({ where: { id: this.id } })
     }
+
+    removeDuplicateNodes() {
+        const seenIds = new Set<string>()
+        let duplicatesFound = 0
+
+        // Recursive function to traverse and remove duplicates
+        const removeDuplicates = (nodes: ExpenseNode[]): ExpenseNode[] => {
+            const uniqueNodes: ExpenseNode[] = []
+
+            for (const node of nodes) {
+                if (seenIds.has(node.id)) {
+                    // This is a duplicate, skip it
+                    duplicatesFound++
+                    console.log(`Removing duplicate node with ID: ${node.id} in trip ${this.id}`)
+                    continue
+                }
+
+                // Mark this ID as seen
+                seenIds.add(node.id)
+
+                // Recursively process children
+                node.children = removeDuplicates(node.children)
+
+                uniqueNodes.push(node)
+            }
+
+            return uniqueNodes
+        }
+
+        this.nodes = removeDuplicates(this.nodes)
+
+        if (duplicatesFound > 0) {
+            console.log(`Trip ${this.id} (${this.name}): Removed ${duplicatesFound} duplicate node(s)`)
+        } else {
+            console.log(`Trip ${this.id} (${this.name}): No duplicates found`)
+        }
+    }
 }

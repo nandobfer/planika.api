@@ -6,7 +6,7 @@ import { ExpenseNode } from "./class/Trip/ExpenseNode"
 import { WithoutFunctions } from "./class/helpers"
 
 const saveTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
-const SAVE_DEBOUNCE_MS = 2000 // Wait 2 seconds after last change before saving
+const SAVE_DEBOUNCE_MS = 5000 // Wait 5 seconds after last change before saving
 
 export const hocuspocus = new Hocuspocus({
     /**
@@ -110,6 +110,7 @@ export const hocuspocus = new Hocuspocus({
                 const trip = await Trip.findById(tripId)
                 if (trip) {
                     trip.nodes = expenseNodes
+                    trip.removeDuplicateNodes()
                     await trip.saveNodes()
                     console.log(`Successfully saved changes for trip: ${tripId}`)
                 }
