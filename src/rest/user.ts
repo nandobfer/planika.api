@@ -5,6 +5,7 @@ import { UploadedFile } from "express-fileupload"
 import { Prisma } from "@prisma/client"
 import { HandledPrismaError } from "../class/HandledError"
 import { TripForm } from "../class/Trip/Trip"
+import { requireUserId, UserRequest } from "../middlewares/requireUserId"
 
 const router: Router = express.Router()
 
@@ -151,6 +152,19 @@ router.get("/pending-invitations", authenticate, async (request: AuthenticatedRe
         const user = request.user!
         const invitations = await user.getPendingInvitation()
         return response.json(invitations)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.get("/picture", requireUserId, async (request: UserRequest, response: Response) => {
+    try {
+        const user = request.user!
+        if (!user.picture) {
+            return response.status(404).send("No picture found")
+        }
+        return response.redirect(user.picture)
     } catch (error) {
         console.log(error)
         response.status(500).send(error)

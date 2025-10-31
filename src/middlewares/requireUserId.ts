@@ -9,7 +9,7 @@ export const requireUserId = async (request: UserRequest, response: Response, ne
     const {  user_id } = request.query
 
     if (!user_id) {
-        return response.status(400).send("User_id param is required")
+        return response.status(400).send("user_id param is required")
     }
 
     request.user = await User.findById(user_id as string)

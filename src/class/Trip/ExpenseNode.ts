@@ -6,6 +6,12 @@ interface Expense {
     quantity?: string
 }
 
+export interface ExpenseComment {
+    authorId: string
+    content: string
+    createdAt: number
+}
+
 export class ExpenseNode {
     id: string
     tripId: string
@@ -20,7 +26,7 @@ export class ExpenseNode {
     expense?: Expense
     location?: string
     datetime?: number
-    notes: string[]
+    notes: ExpenseComment[]
 
     parentId?: string
     children: ExpenseNode[]
