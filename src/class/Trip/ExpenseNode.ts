@@ -12,6 +12,8 @@ export interface ExpenseComment {
     createdAt: number
 }
 
+export type ExpenseStatus = "pending" | "reserved" | "paid"
+
 export class ExpenseNode {
     id: string
     tripId: string
@@ -26,6 +28,9 @@ export class ExpenseNode {
     expense?: Expense
     location?: string
     datetime?: number
+    status?: ExpenseStatus
+    responsibleParticipantId?: string
+
     notes: ExpenseComment[]
 
     parentId?: string
@@ -50,6 +55,8 @@ export class ExpenseNode {
         this.notes = data.notes || []
         this.totalExpenses = this.getTotalExpenses()
         this.totalLocations = this.getTotalLocations()
+        this.status = data.status
+        this.responsibleParticipantId = data.responsibleParticipantId
     }
 
     getTotalExpenses(): number {
@@ -108,6 +115,8 @@ export class ExpenseNode {
         if (data.datetime !== undefined) this.datetime = data.datetime
         if (data.notes !== undefined) this.notes = data.notes
         if (data.parentId !== undefined) this.parentId = data.parentId
+        if (data.status !== undefined) this.status = data.status
+        if (data.responsibleParticipantId !== undefined) this.responsibleParticipantId = data.responsibleParticipantId
 
         // Recalculate totals after update
         this.totalExpenses = this.getTotalExpenses()
