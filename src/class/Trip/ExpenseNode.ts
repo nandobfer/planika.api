@@ -12,7 +12,7 @@ export interface ExpenseComment {
     createdAt: number
 }
 
-export type ExpenseStatus = "pending" | "reserved" | "paid"
+export type ExpenseStatus = "pending" | "reserved" | "paid" | null
 
 export class ExpenseNode {
     id: string
