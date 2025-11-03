@@ -290,4 +290,12 @@ export class Trip {
             console.log(`Trip ${this.id} (${this.name}): No duplicates found`)
         }
     }
+
+    async sendReportByEmail(destinations: string[]) {
+        return await mailer.sendMail({
+            destination: destinations,
+            subject: `Relatório da viagem "${this.name}"`,
+            html: templates.mail.tripReport(this),
+        })
+    }
 }

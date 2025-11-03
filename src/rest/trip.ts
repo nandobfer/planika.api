@@ -86,4 +86,17 @@ router.get("/participant/accept", authenticate, requireTrip, async (request: Aut
     }
 })
 
+router.post("/report/email", authenticate, requireTrip, async (request: AuthenticatedTripRequest, response: Response) => {
+    const data = request.body as { destinations: string[] }
+    console.log(data)
+
+    try {
+        const result = await request.trip!.sendReportByEmail(data.destinations)
+        return response.json(result)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
 export default router
