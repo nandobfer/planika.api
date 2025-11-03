@@ -29,7 +29,7 @@ export class ExpenseNode {
     location?: string
     datetime?: number
     status?: ExpenseStatus
-    responsibleParticipantId?: string
+    responsibleParticipantId?: string | null
 
     notes: ExpenseComment[]
 
