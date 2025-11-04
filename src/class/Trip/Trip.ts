@@ -30,6 +30,7 @@ export class Trip {
     nodes: ExpenseNode[]
     totalExpenses: number
     status: TripStatus
+    totalLocations: string[]
 
     static async new(data: TripForm, userId: string) {
         const now = Date.now()
@@ -137,6 +138,7 @@ export class Trip {
 
         this.totalExpenses = this.nodes.reduce((total, node) => total + node.getTotalExpenses(), 0)
         this.status = this.getStatus()
+        this.totalLocations = Array.from(new Set(this.nodes.flatMap((node) => node.getTotalLocations())))
     }
 
     load(data: PrismaTrip) {
@@ -154,6 +156,7 @@ export class Trip {
 
         this.totalExpenses = this.nodes.reduce((total, node) => total + node.getTotalExpenses(), 0)
         this.status = this.getStatus()
+        this.totalLocations = Array.from(new Set(this.nodes.flatMap((node) => node.getTotalLocations())))
     }
 
     getStatus(): TripStatus {
