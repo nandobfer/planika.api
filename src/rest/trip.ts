@@ -4,6 +4,8 @@ import { requireTrip, TripRequest } from "../middlewares/requireTrip"
 import { TripForm } from "../class/Trip/Trip"
 import { TripParticipantForm } from "../class/Trip/TripParticipant"
 import { ParticipantRequest, requireParticipant } from "../middlewares/requireParticipant"
+import { saveFile } from "../tools/saveFile"
+import { UploadedFile } from "express-fileupload"
 
 const router: Router = express.Router()
 
@@ -93,6 +95,21 @@ router.post("/report/email", authenticate, requireTrip, async (request: Authenti
     try {
         const result = await request.trip!.sendReportByEmail(data.destinations)
         return response.json(result)
+    } catch (error) {
+        console.log(error)
+        response.status(500).send(error)
+    }
+})
+
+router.post("/media", authenticate, requireTrip, async (request: AuthenticatedTripRequest, response: Response) => {
+    try {
+        const _file = request.files?.file
+        if (_file) {
+            const file = _file as UploadedFile
+
+            const url = saveFile(`/trips/${request.trip!.id}/media`, file.data, file.name)
+            return response.send(url)
+        }
     } catch (error) {
         console.log(error)
         response.status(500).send(error)
